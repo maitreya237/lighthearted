@@ -13,6 +13,16 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [lastSync, setLastSync] = useState(new Date().toLocaleTimeString());
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Live clock update
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   // Office Timezones
   const offices = [
@@ -83,11 +93,11 @@ const App = () => {
           <div className="flex items-center gap-6">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={14} />
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="Search grants, trials, or researchers..."
                 className="bg-[#111] border border-slate-800 rounded-full py-1.5 pl-10 pr-4 text-xs w-80 focus:outline-none focus:border-red-500/50 transition-all"
-                value={searchQuery} 
+                value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
@@ -98,7 +108,7 @@ const App = () => {
                 <div key={office.name} className="flex flex-col items-end">
                   <span className="text-[9px] text-slate-500 uppercase">{office.name}</span>
                   <span className="text-xs font-mono text-white">
-                    {new Date().toLocaleTimeString('en-GB', { timeZone: office.tz, hour: '2-digit', minute: '2-digit' })}
+                    {currentTime.toLocaleTimeString('en-GB', { timeZone: office.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                   </span>
                 </div>
               ))}
@@ -126,13 +136,12 @@ const App = () => {
 };
 
 const NavItem = ({ icon, label, active, onClick }) => (
-  <button 
-    onClick={onClick} 
-    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
-      active 
-        ? 'bg-red-500/10 text-red-500 border border-red-500/20 shadow-sm' 
-        : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-    }`}
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${active
+      ? 'bg-red-500/10 text-red-500 border border-red-500/20 shadow-sm'
+      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+      }`}
   >
     {icon}
     {label}
